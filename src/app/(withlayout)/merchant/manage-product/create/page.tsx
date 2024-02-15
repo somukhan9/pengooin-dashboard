@@ -1,22 +1,22 @@
-"use client";
-import Form from "@/components/Forms/Form";
-import FormInput from "@/components/Forms/FormInput";
-import FormSelectField from "@/components/Forms/FormSelectField";
-import FormTag from "@/components/Forms/FormTag";
-import ImageUpload from "@/components/ui/ImageUpload";
-import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
-import UploadImage from "@/components/ui/UploadImage";
-import { useCategoriesQuery } from "@/redux/api/categoryApi";
-import { useAddProductWithFormDataMutation } from "@/redux/api/productApi";
-import { ICategory } from "@/types";
-import { Button, Col, Row, UploadFile, message } from "antd";
-import { useState } from "react";
+'use client'
+import Form from '@/components/Forms/Form'
+import FormInput from '@/components/Forms/FormInput'
+import FormSelectField from '@/components/Forms/FormSelectField'
+import FormTag from '@/components/Forms/FormTag'
+import ImageUpload from '@/components/ui/ImageUpload'
+import UMBreadCrumb from '@/components/ui/UMBreadCrumb'
+import UploadImage from '@/components/ui/UploadImage'
+import { useCategoriesQuery } from '@/redux/api/categoryApi'
+import { useAddProductWithFormDataMutation } from '@/redux/api/productApi'
+import { ICategory } from '@/types'
+import { Button, Col, Row, UploadFile, message } from 'antd'
+import { useState } from 'react'
 
-const page = () => {
-  const [fileArray, setFileArray] = useState([]);
-  const { data, isLoading } = useCategoriesQuery({ limit: 100, page: 1 });
+const CreateProduct = () => {
+  const [fileArray, setFileArray] = useState([])
+  const { data, isLoading } = useCategoriesQuery({ limit: 100, page: 1 })
   //@ts-ignore
-  const categories: ICategory[] = data?.categories?.data;
+  const categories: ICategory[] = data?.categories?.data
 
   const CategoriesOptions =
     categories &&
@@ -24,43 +24,43 @@ const page = () => {
       return {
         label: category?.title,
         value: category?.id,
-      };
-    });
+      }
+    })
 
-  const [addProductWithFormData] = useAddProductWithFormDataMutation();
+  const [addProductWithFormData] = useAddProductWithFormDataMutation()
   const onSubmit = async (data: any) => {
     // console.log(data);
-    console.log(fileArray);
-    const formData = new FormData();
-    formData.append("title", data["title"]);
-    formData.append("description", data["description"]);
+    console.log(fileArray)
+    const formData = new FormData()
+    formData.append('title', data['title'])
+    formData.append('description', data['description'])
     // formData.append('title', data["title"]);
 
     fileArray.forEach((file) => {
       //@ts-ignore
-      formData.append("productImages", file);
-    });
+      formData.append('productImages', file)
+    })
     // formData.append("discount", data["discount"]);
 
     try {
-      await addProductWithFormData(formData);
+      await addProductWithFormData(formData)
       // console.log(formData);
-      message.success("Admin created successfully!");
+      message.success('Admin created successfully!')
     } catch (err: any) {
-      console.error(err.message);
+      console.error(err.message)
     }
-  };
+  }
   return (
     <div>
       <UMBreadCrumb
         items={[
           {
-            label: "merchant",
-            link: "/merchant",
+            label: 'merchant',
+            link: '/merchant',
           },
           {
-            label: "manage product",
-            link: "/merchant/manage-product",
+            label: 'manage product',
+            link: '/merchant/manage-product',
           },
         ]}
       />
@@ -69,16 +69,16 @@ const page = () => {
         <Form submitHandler={onSubmit}>
           <div
             style={{
-              border: "1px solid #d9d9d9",
-              borderRadius: "5px",
-              padding: "15px",
-              marginBottom: "10px",
+              border: '1px solid #d9d9d9',
+              borderRadius: '5px',
+              padding: '15px',
+              marginBottom: '10px',
             }}
           >
             <p
               style={{
-                fontSize: "18px",
-                marginBottom: "10px",
+                fontSize: '18px',
+                marginBottom: '10px',
               }}
             >
               Product Information
@@ -88,7 +88,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormInput
@@ -102,7 +102,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormInput
@@ -116,7 +116,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormInput
@@ -130,7 +130,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormSelectField
@@ -145,7 +145,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormInput
@@ -159,7 +159,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormInput
@@ -173,7 +173,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 {/* <UploadImage setFileArray={setFileArray} /> */}
@@ -183,7 +183,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormTag name="productTags" label="Product Tags" />
@@ -192,7 +192,7 @@ const page = () => {
                 className="gutter-row"
                 span={8}
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: '10px',
                 }}
               >
                 <FormInput
@@ -210,7 +210,7 @@ const page = () => {
         </Form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default page;
+export default CreateProduct
