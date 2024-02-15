@@ -1,8 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 
-import Dropzone, { DropzoneProps, useDropzone } from 'react-dropzone'
+import { DropzoneProps, useDropzone } from 'react-dropzone'
 
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,7 +16,7 @@ import {
   verifyOTP,
 } from './utils'
 
-import './styles.css'
+import '../styles.css'
 
 const SignUp = () => {
   const [otp, setOTP] = useState<string>('')
@@ -140,13 +141,13 @@ const SignUp = () => {
           )}
         </div>
 
-        {/* Ward/Union Number */}
+        {/* Ward/Union Number/Thana/City */}
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="ward"
           >
-            Ward/Union Number
+            Ward/Union Number/Thana/City
           </label>
           <input
             type="text"
@@ -397,15 +398,21 @@ const SignUp = () => {
           )}
         </div>
 
-        {/* Repeat similar structure for other fields */}
-
         <button
+          disabled={isSubmitting}
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
           Sign Up
         </button>
       </form>
+
+      <div className="text-center text-gray-700">
+        <p className="mb-2">Already have an account?</p>
+        <Link href="/login" className="text-blue-500 hover:underline">
+          Log in here
+        </Link>
+      </div>
     </div>
   )
 }

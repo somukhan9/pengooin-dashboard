@@ -1,4 +1,4 @@
-import SignUp from '@/components/Samrat/Signup'
+import SignUp from '@/components/Signup'
 
 const SignUpPage = () => {
   return (

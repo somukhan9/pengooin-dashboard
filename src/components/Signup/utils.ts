@@ -50,7 +50,7 @@ export const signUpSchema: any = z
       .refine((value) => !!value, { message: 'Ward/Union Number is required' }),
     mobileNumber: z
       .string()
-      .min(11, 'Mobile number should be at least 11 characters')
+      .min(11, 'Mobile number is required')
       .max(11, 'Mobile number should be at least 11 characters')
       .refine((value) => !!value, { message: 'Mobile Number is required' })
       .refine(
