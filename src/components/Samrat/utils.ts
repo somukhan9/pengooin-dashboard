@@ -52,7 +52,11 @@ export const signUpSchema: any = z
       .string()
       .min(11, 'Mobile number should be at least 11 characters')
       .max(11, 'Mobile number should be at least 11 characters')
-      .refine((value) => !!value, { message: 'Mobile Number is required' }),
+      .refine((value) => !!value, { message: 'Mobile Number is required' })
+      .refine(
+        (value) => isValidBangladeshiPhoneNumber(value),
+        'Invalid bangladeshi mobile number'
+      ),
     otp: z.string().refine((value) => !!value, { message: 'OTP is required' }),
     email: z
       .string()
