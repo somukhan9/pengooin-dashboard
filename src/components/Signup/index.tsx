@@ -145,8 +145,9 @@ const SignUp = () => {
       // TOD: Take other actions after successful registration
       // This will reset the form
       reset()
-      // Also reset the phone number state, picture and tradeLicensePicture
+      // Also reset the phone number state, OTP, picture and tradeLicensePicture
       setPhoneNumber('')
+      setOTP('')
       setPicture(undefined)
       setTradeLicensePicture(undefined)
     }
