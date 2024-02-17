@@ -174,7 +174,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.shopName
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.shopName && (
@@ -199,7 +199,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.address
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.address && (
@@ -224,7 +224,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.ward
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.ward && (
@@ -256,7 +256,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.mobileNumber
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.mobileNumber && (
@@ -294,7 +294,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.otp
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.otp && (
@@ -331,7 +331,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.email
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.email && (
@@ -356,7 +356,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.password
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.password && (
@@ -381,7 +381,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.retypePassword
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.retypePassword && (
@@ -434,7 +434,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.tradeLicense
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.tradeLicense && (
@@ -490,7 +490,7 @@ const SignUp = () => {
             className={`w-full px-3 py-2 border rounded-md  outline-none ${
               errors.captcha
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.captcha && (

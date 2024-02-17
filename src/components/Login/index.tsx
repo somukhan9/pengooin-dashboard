@@ -41,7 +41,7 @@ const Login = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.username
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.username && (
@@ -66,7 +66,7 @@ const Login = () => {
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.password
                 ? 'border-red-500'
-                : 'focus:border-blue-400 focus:border-2 hover:border-blue-400 border-blue-200'
+                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
             }`}
           />
           {errors.password && (
