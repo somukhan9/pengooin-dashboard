@@ -1,5 +1,18 @@
 import { z } from 'zod'
 
+export const normalizePhoneNumber = (value: string): string => {
+  // Convert the value to a positive number
+  let valueToReturn = ''
+
+  const noDigitsRegex = /^[^\d]+$/g
+  valueToReturn = value.replaceAll(noDigitsRegex, '')
+
+  return valueToReturn
+
+  // Format the value back to string with or without the '+' sign
+  // return numericValue < 0 ? `-${positiveValue}` : positiveValue.toString()
+}
+
 export const isValidBangladeshiPhoneNumber = (phoneNumber: string): boolean => {
   // Remove any non-numeric characters and the country code "+88"
   const numericPhoneNumber = phoneNumber.replace(/\D/g, '').replace(/^88/, '')
@@ -50,9 +63,11 @@ export const signUpSchema: any = z
       .refine((value) => !!value, { message: 'Ward/Union Number is required' }),
     mobileNumber: z
       .string()
-      .min(11, 'Mobile number is required')
-      .max(11, 'Mobile number should be at least 11 characters')
       .refine((value) => !!value, { message: 'Mobile Number is required' })
+      .refine((value) => value.length === 11, {
+        message: 'Mobile number must be of 11 digits',
+      })
+      .transform((value) => normalizePhoneNumber(value))
       .refine(
         (value) => isValidBangladeshiPhoneNumber(value),
         'Invalid bangladeshi mobile number'

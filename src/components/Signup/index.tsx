@@ -23,11 +23,17 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState<string>('')
   const [picture, setPicture] = useState<File | undefined>(undefined)
   const [pictureError, setPictureError] = useState<string>('')
+  const [tradeLicensePicture, setTradeLicensePicture] = useState<
+    File | undefined
+  >(undefined)
+  const [tradeLicensePictureError, setTradeLicensePictureError] =
+    useState<string>('')
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    reset,
+    formState: { errors, isSubmitting, isSubmitSuccessful, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(signUpSchema),
   })
@@ -58,6 +64,33 @@ const SignUp = () => {
     console.log(selectedFile)
   }
 
+  const onDropForTradeLicense = (acceptedFiles: File[]) => {
+    // Handle the dropped file (in this case, only the first file)
+    const selectedFile = acceptedFiles[0]
+
+    // Validate the selected file
+    const isFileValid = isImageFile(selectedFile)
+
+    if (!isFileValid) {
+      // Handle invalid file (display error, etc.)
+      console.error('Invalid file type')
+      setTradeLicensePictureError('Image type should jpg, jpeg or png')
+      return
+    }
+
+    setTradeLicensePictureError('')
+
+    // Set form data manually
+    const formData: FormData = {
+      tradeLicensePicture: selectedFile ? selectedFile.name : undefined,
+    }
+
+    setTradeLicensePicture(selectedFile)
+
+    // Handle form submission or update state with formData
+    console.log(selectedFile)
+  }
+
   const dropzoneProps: DropzoneProps = {
     onDrop,
     accept: {
@@ -67,7 +100,22 @@ const SignUp = () => {
     }, // Accept only image files
     maxFiles: 1, // Limit to a single file
   }
+
+  const dropzonePropsForTradeLicense: DropzoneProps = {
+    onDrop: onDropForTradeLicense,
+    accept: {
+      'image/png': ['.png'],
+      'image/jpg': ['.jpg'],
+      'image/jpeg': ['.jpeg'],
+    }, // Accept only image files
+    maxFiles: 1, // Limit to a single file
+  }
   const { getRootProps, getInputProps } = useDropzone(dropzoneProps)
+
+  const {
+    getRootProps: getRootPropsTradeLicense,
+    getInputProps: getInputPropsForTradeLicense,
+  } = useDropzone(dropzonePropsForTradeLicense)
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!picture) {
@@ -77,12 +125,31 @@ const SignUp = () => {
 
     setPictureError('')
 
+    if (!tradeLicensePicture) {
+      setTradeLicensePictureError('Please select an image')
+      return
+    }
+
+    setTradeLicensePictureError('')
+
     data = {
       ...data,
       picture,
+      tradeLicensePicture,
     }
 
     console.log(data)
+
+    // If the submission is successful then clear the form and take necessary actions for next step
+    if (isSubmitSuccessful) {
+      // TOD: Take other actions after successful registration
+      // This will reset the form
+      reset()
+      // Also reset the phone number state, picture and tradeLicensePicture
+      setPhoneNumber('')
+      setPicture(undefined)
+      setTradeLicensePicture(undefined)
+    }
   }
 
   return (
@@ -175,10 +242,16 @@ const SignUp = () => {
             Mobile Number
           </label>
           <input
-            type="number"
+            type="tel"
             id="mobileNumber"
+            min={0}
+            value={phoneNumber}
             {...register('mobileNumber')}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={(e) => {
+              const noDigitsRegex = /^[^\d]+$/g
+              const value = e.target.value
+              setPhoneNumber(value.replaceAll(noDigitsRegex, ''))
+            }}
             className={`w-full px-3 py-2 border rounded-md outline-none ${
               errors.mobileNumber
                 ? 'border-red-500'
@@ -370,6 +443,34 @@ const SignUp = () => {
           )}
         </div>
 
+        {/* Trade License Picture */}
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="picture"
+          >
+            Picture of Trade License
+          </label>
+          <div
+            {...getRootPropsTradeLicense()}
+            className="w-full px-3 py-2 border rounded-md outline-none cursor-pointer"
+          >
+            <input {...getInputPropsForTradeLicense()} />
+            {tradeLicensePicture ? (
+              <p>&quot;{tradeLicensePicture.name}&quot; selected</p>
+            ) : (
+              <p>
+                Drag &apos;n&apos; drop an image here, or click to select one
+              </p>
+            )}
+          </div>
+          {tradeLicensePictureError && (
+            <p className="text-red-500 text-xs mt-1">
+              {tradeLicensePictureError as string}
+            </p>
+          )}
+        </div>
+
         {/* Captcha Image */}
         <div className="mb-4">Captcha Image</div>
 
@@ -399,9 +500,9 @@ const SignUp = () => {
         </div>
 
         <button
-          disabled={isSubmitting}
+          disabled={isSubmitting || !isValid}
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:opacity-80"
         >
           Sign Up
         </button>
