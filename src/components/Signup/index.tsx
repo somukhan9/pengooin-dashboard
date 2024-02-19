@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
+import ReCAPTCHA from 'react-google-recaptcha'
+
 import { DropzoneProps, useDropzone } from 'react-dropzone'
 
 import { useForm, SubmitHandler } from 'react-hook-form'
@@ -19,6 +21,7 @@ import {
 import '../styles.css'
 
 const SignUp = () => {
+  const [captcha, setCaptcha] = useState<string | null>(null)
   const [otp, setOTP] = useState<string>('')
   const [phoneNumber, setPhoneNumber] = useState<string>('')
   const [picture, setPicture] = useState<File | undefined>(undefined)
@@ -131,6 +134,11 @@ const SignUp = () => {
     }
 
     setTradeLicensePictureError('')
+
+    if (!captcha) {
+      console.log('Captcha verification failed!')
+      return
+    }
 
     data = {
       ...data,
@@ -473,10 +481,16 @@ const SignUp = () => {
         </div>
 
         {/* Captcha Image */}
-        <div className="mb-4">Captcha Image</div>
+        {/* {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} */}
+        <div className="mb-4">
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+            onChange={setCaptcha}
+          />
+        </div>
 
         {/* Captcha */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="captcha"
@@ -498,7 +512,7 @@ const SignUp = () => {
               {errors.captcha.message as string}
             </p>
           )}
-        </div>
+        </div> */}
 
         <button
           disabled={isSubmitting || !isValid}

@@ -13,7 +13,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting, isSubmitSuccessful, isValid },
   } = useForm<FormData>({ resolver: zodResolver(loginSchema) })
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
@@ -77,9 +77,9 @@ const Login = () => {
         </div>
 
         <button
-          disabled={isSubmitting}
+          disabled={isSubmitting || !isValid}
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:opacity-80"
         >
           Login
         </button>
