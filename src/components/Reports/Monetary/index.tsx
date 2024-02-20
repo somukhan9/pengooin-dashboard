@@ -143,7 +143,7 @@ const MonetaryReport = () => {
       </div>
 
       {/* Data in Table format */}
-      <div className="relative overflow-x-auto">
+      <div className="relative overflow-x-auto pb-2">
         <table className="w-full border border-gray-300 divide-y divide-gray-300">
           <thead className="text-left">
             <tr>

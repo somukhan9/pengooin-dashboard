@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import classnames from 'classnames'
 
@@ -31,8 +31,15 @@ const Report = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const currentReport = parseInt(searchParams.get('report-state') || '')
+  const currentReport = parseInt(searchParams.get('report-state') || '0')
   const [reportState, setReportState] = useState<number>(currentReport)
+
+  const [isClient, setIsClient] = useState<boolean>(false)
+
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   return (
     <div className="flex flex-col gap-8 items-center mt-10">
@@ -46,15 +53,11 @@ const Report = () => {
             onChange={(e) => setReportState(parseInt(e.target.value))}
             className="block transition-all duration-200 ease-in-out min-w-[250px] appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-500"
           >
-            <option value="" disabled>
+            <option value={0} disabled>
               Select a Report
             </option>
             {options.map((value: { id: number; title: string }, index) => (
-              <option
-                key={index}
-                value={value.id}
-                // selected={reportState === value.id}
-              >
+              <option key={index} value={value.id}>
                 {value.title}
               </option>
             ))}
@@ -90,38 +93,56 @@ const Report = () => {
 
       {/* Report Container */}
 
-      <div className="w-full flex items-center justify-center relative">
-        <div
-          className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
-            {
-              'opacity-0 h-0 overflow-hidden': currentReport !== 1,
-              'opacity-100': currentReport === 1,
-            }
-          )}`}
-        >
-          <FulFillmentReport />
+      {isClient ? (
+        <div className="w-full flex items-center justify-center relative">
+          <div
+            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+              {
+                'opacity-0 h-0 overflow-hidden': [1, 2, 3].includes(
+                  currentReport
+                ),
+                'opacity-100': ![1, 2, 3].includes(currentReport),
+              }
+            )}`}
+          >
+            <h3 className="text-2xl font-bold text-center my-4">
+              Please select an report and then click on generate
+            </h3>
+          </div>
+          <div
+            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+              {
+                'opacity-0 h-0 overflow-hidden': currentReport !== 1,
+                'opacity-100': currentReport === 1,
+              }
+            )}`}
+          >
+            <FulFillmentReport />
+          </div>
+          <div
+            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+              {
+                'opacity-0 h-0 overflow-hidden': currentReport !== 2,
+                'opacity-100': currentReport === 2,
+              }
+            )}`}
+          >
+            <MonetaryReport />
+          </div>
+          <div
+            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+              {
+                'opacity-0 h-0 overflow-hidden': currentReport !== 3,
+                'opacity-100': currentReport === 3,
+              }
+            )}`}
+          >
+            <DPPerformanceReport />
+          </div>
         </div>
-        <div
-          className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
-            {
-              'opacity-0 h-0 overflow-hidden': currentReport !== 2,
-              'opacity-100': currentReport === 2,
-            }
-          )}`}
-        >
-          <MonetaryReport />
-        </div>
-        <div
-          className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
-            {
-              'opacity-0 h-0 overflow-hidden': currentReport !== 3,
-              'opacity-100': currentReport === 3,
-            }
-          )}`}
-        >
-          <DPPerformanceReport />
-        </div>
-      </div>
+      ) : (
+        <h4>Loading...</h4>
+      )}
     </div>
   )
 }
