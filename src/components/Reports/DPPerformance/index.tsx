@@ -9,35 +9,19 @@ import { CSVLink } from 'react-csv'
 import * as XLSX from 'xlsx'
 import Papa from 'papaparse'
 
-const columns = [
-  { id: 1, title: 'Order ID' },
-  { id: 2, title: 'Delivery Charge' },
-  { id: 3, title: 'Vat' },
-  { id: 4, title: 'Total Price' },
-]
+import { TOrder } from './types'
+import { generateDummyData, columns } from './utils'
 
-type TReport = {
-  id: number
-  deliveryCharge: number
-  vat: number
-  totalPrice: number
-}
+const DPPerformanceReport = () => {
+  const dpPerformanceData: TOrder[] = generateDummyData()
 
-const reports = [
-  { id: 1, deliveryCharge: 49, vat: 10, totalPrice: 259 },
-  { id: 2, deliveryCharge: 39, vat: 7, totalPrice: 232 },
-  { id: 3, deliveryCharge: 60, vat: 12, totalPrice: 350 },
-  { id: 4, deliveryCharge: 35, vat: 2, totalPrice: 150 },
-]
-
-const MonetaryReport = () => {
   const searchParams = useSearchParams()
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null)
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
 
   // Only for demo purpose
-  const [tableData, setTableData] = useState<TReport[]>([...reports])
+  const [tableData, setTableData] = useState<TOrder[]>([...dpPerformanceData])
 
   const page = searchParams.get('page') || 1
 
@@ -52,14 +36,21 @@ const MonetaryReport = () => {
   const exportCSV = () => {
     // Prepare CSV data
     const csvData = tableData.map((row) => ({
-      'Order ID': row.id,
-      'Delivery Charge': row.deliveryCharge,
-      VAT: row.vat,
-      'Total Price': row.totalPrice,
+      'Order ID': row.orderId,
+      'Delivery Person ID': row.deliveryPerson.id,
+      'Delivery Person Name': row.deliveryPerson.name,
+      'Order Time': row.orderTime,
+      'Assignment Time': row.assignmentTime,
+      'In Progress Time': row.inProgressTime,
+      'Order In Progress (min)': row.orderInProgress,
+      'Received Time': row.receivedTime,
+      'Delivery Time': row.deliveryTime,
+      'Delivery Duration From Receive (min)': row.deliveryDurationFromReceive,
+      'Order Execution Time (min)': row.orderExecutionTime,
     }))
 
     // Generate CSV file
-    const csvFileName = 'monetary_report.csv'
+    const csvFileName = 'dp_performance_report.csv'
     const csvOptions = { headers: true }
     // const csvBlob = new Blob([Papa.unparse(csvData, csvOptions)], {
     //   type: 'text/csv;charset=utf-8;',
@@ -81,12 +72,31 @@ const MonetaryReport = () => {
   const exportExcel = () => {
     // Prepare Excel data
     const excelData = [
-      ['Order ID', 'Delivery Charge', 'VAT', 'Total Price'],
+      [
+        'Order ID',
+        'Delivery Person ID',
+        'Delivery Person Name',
+        'Order Time',
+        'Assignment Time',
+        'In Progress Time',
+        'Order In Progress (min)',
+        'Received Time',
+        'Delivery Time',
+        'Delivery Duration From Receive (min)',
+        'Order Execution Time (min)',
+      ],
       ...tableData.map((row) => [
-        row.id,
-        row.deliveryCharge,
-        row.vat,
-        row.totalPrice,
+        row.orderId,
+        row.deliveryPerson.id,
+        row.deliveryPerson.name,
+        row.orderTime,
+        row.assignmentTime,
+        row.inProgressTime,
+        row.orderInProgress,
+        row.receivedTime,
+        row.deliveryTime,
+        row.deliveryDurationFromReceive,
+        row.orderExecutionTime,
       ]),
     ]
 
@@ -96,14 +106,14 @@ const MonetaryReport = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1')
 
     // Generate Excel file
-    const excelFileName = 'monetary_report.xlsx'
+    const excelFileName = 'dp_performance_report.xlsx'
     XLSX.writeFile(workbook, excelFileName)
   }
 
   return (
     <div className="grid items-center justify-center border border-gray-300 rounded-lg py-5 px-4">
       <h3 className="md:text-2xl text-xl font-semibold text-center mb-4">
-        Monetary Report
+        DP Performance Report
       </h3>
 
       {/* Filter By Date Options */}
@@ -147,23 +157,42 @@ const MonetaryReport = () => {
         <table className="w-full border border-gray-300 divide-y divide-gray-300">
           <thead className="text-left">
             <tr>
-              {columns.map((value: { id: number; title: string }, index) => (
+              {columns.map((value: string, index) => (
                 <th
                   key={index}
                   className="text-left px-6 py-2 whitespace-nowrap"
                 >
-                  {value.title}
+                  {value}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {reports.map((value: TReport, index) => (
+            {dpPerformanceData.map((value: TOrder, index) => (
               <tr key={index}>
-                <td className="px-6 py-2">{value.id}</td>
-                <td className="px-6 py-2">{value.deliveryCharge}</td>
-                <td className="px-6 py-2">{value.vat}</td>
-                <td className="px-6 py-2">{value.totalPrice}</td>
+                <td className="px-6 py-2">{value.orderId}</td>
+                <td className="px-6 py-2">{value.deliveryPerson.id}</td>
+                <td className="px-6 py-2">{value.deliveryPerson.name}</td>
+                <td className="px-6 py-2">
+                  {value.orderTime.toLocaleString()}
+                </td>
+                <td className="px-6 py-2">
+                  {value.assignmentTime.toLocaleString()}
+                </td>
+                <td className="px-6 py-2">
+                  {value.inProgressTime.toLocaleString()}
+                </td>
+                <td className="px-6 py-2">{value.orderInProgress}</td>
+                <td className="px-6 py-2">
+                  {value.receivedTime.toLocaleString()}
+                </td>
+                <td className="px-6 py-2">
+                  {value.deliveryTime.toLocaleString()}
+                </td>
+                <td className="px-6 py-2">
+                  {value.deliveryDurationFromReceive}
+                </td>
+                <td className="px-6 py-2">{value.orderExecutionTime}</td>
               </tr>
             ))}
           </tbody>
@@ -188,4 +217,4 @@ const MonetaryReport = () => {
     </div>
   )
 }
-export default MonetaryReport
+export default DPPerformanceReport

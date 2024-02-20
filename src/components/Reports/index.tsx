@@ -1,15 +1,16 @@
 'use client'
 
+import { useRouter, useSearchParams } from 'next/navigation'
+
 import { useState } from 'react'
 
 import classnames from 'classnames'
 
 import FulFillmentReport from './FulFillment'
 import MonetaryReport from './Monetary'
-import DPPerformanceReport from './DPPerformance/DPPerformance'
+import DPPerformanceReport from './DPPerformance'
 
 import '../styles.css'
-import { useRouter, useSearchParams } from 'next/navigation'
 
 const options = [
   {
@@ -41,17 +42,18 @@ const Report = () => {
       <div className="flex flex-wrap gap-4 items-center">
         <div className="relative inline-block text-left">
           <select
+            value={reportState}
             onChange={(e) => setReportState(parseInt(e.target.value))}
-            className="block min-w-[250px] appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-500"
+            className="block transition-all duration-200 ease-in-out min-w-[250px] appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-500"
           >
-            <option value="" selected disabled>
+            <option value="" disabled>
               Select a Report
             </option>
             {options.map((value: { id: number; title: string }, index) => (
               <option
                 key={index}
                 value={value.id}
-                selected={reportState === value.id}
+                // selected={reportState === value.id}
               >
                 {value.title}
               </option>
@@ -66,9 +68,9 @@ const Report = () => {
               aria-hidden="true"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M5.293 7.293a1 1 0 011.414 0L10 11.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               />
             </svg>
           </div>
@@ -90,7 +92,7 @@ const Report = () => {
 
       <div className="w-full flex items-center justify-center relative">
         <div
-          className={`absolute w-full transition-all duration-200 ease-in-out ${classnames(
+          className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
             {
               'opacity-0 h-0 overflow-hidden': currentReport !== 1,
               'opacity-100': currentReport === 1,
@@ -110,7 +112,7 @@ const Report = () => {
           <MonetaryReport />
         </div>
         <div
-          className={`absolute w-full transition-all duration-200 ease-in-out ${classnames(
+          className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
             {
               'opacity-0 h-0 overflow-hidden': currentReport !== 3,
               'opacity-100': currentReport === 3,
