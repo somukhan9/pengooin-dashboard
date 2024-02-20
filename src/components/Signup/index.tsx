@@ -3,6 +3,11 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+
+import { isValidPhoneNumber } from 'libphonenumber-js'
+
 import ReCAPTCHA from 'react-google-recaptcha'
 
 import { DropzoneProps, useDropzone } from 'react-dropzone'
@@ -250,22 +255,35 @@ const SignUp = () => {
           >
             Mobile Number
           </label>
-          <input
-            type="tel"
-            id="mobileNumber"
-            min={0}
+          <PhoneInput
+            // type="tel"
+            country="bd"
+            // id="mobileNumber"
+            // min={0}
             value={phoneNumber}
             {...register('mobileNumber')}
-            onChange={(e) => {
-              const noDigitsRegex = /^[^\d]+$/g
-              const value = e.target.value
-              setPhoneNumber(value.replaceAll(noDigitsRegex, ''))
+            // onChange={(e) => {
+            //   const noDigitsRegex = /^[^\d]+$/g
+            //   const value = e.target.value
+            //   setPhoneNumber(value.replaceAll(noDigitsRegex, ''))
+            // }}
+            onChange={(value) => {
+              setPhoneNumber(value)
+              // console.log(isValidPhoneNumber(value, 'BD'))
+              // console.log(formattedValue)
             }}
-            className={`w-full px-3 py-2 border rounded-md outline-none ${
-              errors.mobileNumber
-                ? 'border-red-500'
-                : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
-            }`}
+            inputStyle={{
+              width: '100%',
+              padding: '2',
+              border: `1px solid ${errors.ward ? 'red-500' : 'blue-200'}`,
+              borderRadius: 'md',
+              outline: 'none',
+            }}
+            // className={`w-full px-3 py-2 border rounded-md outline-none ${
+            //   errors.mobileNumber
+            //     ? 'border-red-500'
+            //     : 'focus:ring-blue-500 focus:ring-1 focus:border-blue-500 hover:border-blue-500 border-blue-200'
+            // }`}
           />
           {errors.mobileNumber && (
             <p className="text-red-500 text-xs mt-1">
@@ -278,7 +296,8 @@ const SignUp = () => {
         <div className="mb-4">
           <button
             type="button"
-            disabled={phoneNumber.length !== 11}
+            // disabled={phoneNumber.length !== 11}
+            disabled={!isValidPhoneNumber(phoneNumber, 'BD')}
             onClick={() => generateOTP(phoneNumber)}
             className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:opacity-80"
           >
