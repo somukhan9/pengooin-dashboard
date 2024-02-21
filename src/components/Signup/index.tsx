@@ -1,7 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
 import { useState } from 'react'
+
+import { toast } from 'react-toastify'
 
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
@@ -15,34 +19,44 @@ import { DropzoneProps, useDropzone } from 'react-dropzone'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { useAddShopperWithFormDataMutation } from '@/redux/api/shopperApi'
+
 import {
   isImageFile,
   signUpSchema,
-  FormData,
+  FormData as SubmitValue,
   generateOTP,
   verifyOTP,
 } from './utils'
 
-import '../styles.css'
+import '../../styles.css'
 
 const SignUp = () => {
-  const [captcha, setCaptcha] = useState<string | null>(null)
+  const router = useRouter()
+
+  const [addShopperWithFormData] = useAddShopperWithFormDataMutation()
+
   const [otp, setOTP] = useState<string>('')
   const [phoneNumber, setPhoneNumber] = useState<string>('')
+
   const [picture, setPicture] = useState<File | undefined>(undefined)
   const [pictureError, setPictureError] = useState<string>('')
+
   const [tradeLicensePicture, setTradeLicensePicture] = useState<
     File | undefined
   >(undefined)
   const [tradeLicensePictureError, setTradeLicensePictureError] =
     useState<string>('')
 
+  const [captcha, setCaptcha] = useState<string | null>(null)
+  const [captchaError, setCaptchaError] = useState<string>('')
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting, isSubmitSuccessful, isValid },
-  } = useForm<FormData>({
+  } = useForm<SubmitValue>({
     resolver: zodResolver(signUpSchema),
   })
 
@@ -61,10 +75,6 @@ const SignUp = () => {
     }
 
     setPictureError('')
-    // Set form data manually
-    const formData: FormData = {
-      picture: selectedFile ? selectedFile.name : undefined,
-    }
 
     setPicture(selectedFile)
 
@@ -87,11 +97,6 @@ const SignUp = () => {
     }
 
     setTradeLicensePictureError('')
-
-    // Set form data manually
-    const formData: FormData = {
-      tradeLicensePicture: selectedFile ? selectedFile.name : undefined,
-    }
 
     setTradeLicensePicture(selectedFile)
 
@@ -125,7 +130,7 @@ const SignUp = () => {
     getInputProps: getInputPropsForTradeLicense,
   } = useDropzone(dropzonePropsForTradeLicense)
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
+  const onSubmit: SubmitHandler<SubmitValue> = async (data) => {
     if (!picture) {
       setPictureError('Please select an image')
       return
@@ -142,19 +147,31 @@ const SignUp = () => {
 
     if (!captcha) {
       console.log('Captcha verification failed!')
+      setCaptchaError('Captcha verification failed!')
       return
     }
 
-    data = {
-      ...data,
-      picture,
-      tradeLicensePicture,
+    setCaptchaError('')
+
+    const formData = new FormData()
+
+    for (let entry of Object.entries(data)) {
+      formData.append(entry[0], entry[1] as string)
     }
 
-    console.log(data)
+    formData.append('mobileNumber', phoneNumber)
+    formData.append('picture', picture)
+    formData.append('tradeLicensePicture', tradeLicensePicture)
+
+    const response: any = await addShopperWithFormData(formData)
+
+    console.log('From FORM STATE ' + isSubmitSuccessful)
+    console.log(response)
+
+    console.log(formData)
 
     // If the submission is successful then clear the form and take necessary actions for next step
-    if (isSubmitSuccessful) {
+    if (response?.data?.success) {
       // TOD: Take other actions after successful registration
       // This will reset the form
       reset()
@@ -163,7 +180,19 @@ const SignUp = () => {
       setOTP('')
       setPicture(undefined)
       setTradeLicensePicture(undefined)
+      router.replace(
+        `/registration-success/${response.data.data.shopper.shopeId}`
+      )
+      toast.success('Registration successful!')
+      return
     }
+
+    if (response?.error?.status === 400 && response?.error?.message) {
+      toast.error(response.error.message)
+      return
+    }
+
+    toast.error('Registration failed! Please try again.')
   }
 
   return (
@@ -256,21 +285,10 @@ const SignUp = () => {
             Mobile Number
           </label>
           <PhoneInput
-            // type="tel"
             country="bd"
-            // id="mobileNumber"
-            // min={0}
             value={phoneNumber}
-            {...register('mobileNumber')}
-            // onChange={(e) => {
-            //   const noDigitsRegex = /^[^\d]+$/g
-            //   const value = e.target.value
-            //   setPhoneNumber(value.replaceAll(noDigitsRegex, ''))
-            // }}
             onChange={(value) => {
               setPhoneNumber(value)
-              // console.log(isValidPhoneNumber(value, 'BD'))
-              // console.log(formattedValue)
             }}
             inputStyle={{
               width: '100%',
@@ -506,6 +524,11 @@ const SignUp = () => {
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
             onChange={setCaptcha}
           />
+          {captchaError && (
+            <p className="text-red-500 text-xs mt-1">
+              {captchaError as string}
+            </p>
+          )}
         </div>
 
         {/* Captcha */}
@@ -534,7 +557,7 @@ const SignUp = () => {
         </div> */}
 
         <button
-          disabled={isSubmitting || !isValid}
+          disabled={isSubmitting || !captcha || !isValid}
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:opacity-80"
         >

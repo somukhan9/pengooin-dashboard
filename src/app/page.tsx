@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
 const HomePage = () => {
-  return redirect('/signup')
-}
+  return redirect("/profile");
+};
 
-export default HomePage
+export default HomePage;

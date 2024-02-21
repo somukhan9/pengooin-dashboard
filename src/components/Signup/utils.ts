@@ -61,17 +61,17 @@ export const signUpSchema: any = z
     ward: z
       .string()
       .refine((value) => !!value, { message: 'Ward/Union Number is required' }),
-    mobileNumber: z
-      .string()
-      .refine((value) => !!value, { message: 'Mobile Number is required' })
-      .refine((value) => value.length === 11, {
-        message: 'Mobile number must be of 11 digits',
-      })
-      .transform((value) => normalizePhoneNumber(value))
-      .refine(
-        (value) => isValidBangladeshiPhoneNumber(value),
-        'Invalid bangladeshi mobile number'
-      ),
+    // mobileNumber: z
+    //   .string()
+    //   .refine((value) => !!value, { message: 'Mobile Number is required' })
+    //   .refine((value) => value.length === 11, {
+    //     message: 'Mobile number must be of 11 digits',
+    //   })
+    //   .transform((value) => normalizePhoneNumber(value))
+    //   .refine(
+    //     (value) => isValidBangladeshiPhoneNumber(value),
+    //     'Invalid bangladeshi mobile number'
+    //   ),
     otp: z.string().refine((value) => !!value, { message: 'OTP is required' }),
     email: z
       .string()
@@ -87,9 +87,6 @@ export const signUpSchema: any = z
     tradeLicense: z
       .string()
       .refine((value) => !!value, { message: 'Trade License is required' }),
-    captcha: z
-      .string()
-      .refine((value) => !!value, { message: 'Captcha is required' }),
   })
   .refine((data) => data.password === data.retypePassword, {
     message: 'Passwords did not match',

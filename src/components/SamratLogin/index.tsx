@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { loginSchema, FormData } from './utils'
 
-import '../styles.css'
+import '../../styles.css'
 
 const Login = () => {
   const {

@@ -10,7 +10,7 @@ import FulFillmentReport from './FulFillment'
 import MonetaryReport from './Monetary'
 import DPPerformanceReport from './DPPerformance'
 
-import '../styles.css'
+import '../../styles.css'
 
 const options = [
   {
@@ -35,7 +35,6 @@ const Report = () => {
   const [reportState, setReportState] = useState<number>(currentReport)
 
   const [isClient, setIsClient] = useState<boolean>(false)
-
 
   useEffect(() => {
     setIsClient(true)
