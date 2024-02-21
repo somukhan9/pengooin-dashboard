@@ -89,9 +89,6 @@ const LoginPage = () => {
                 color: '#38A169',
                 textDecoration: 'none',
                 cursor: 'pointer',
-                ':hover': {
-                  textDecoration: 'underline',
-                },
               }}
             >
               Sign up now
