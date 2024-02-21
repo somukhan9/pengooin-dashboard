@@ -1,9 +1,8 @@
-import Image from 'next/image'
 import React, { useState } from 'react'
 import { PlusOutlined } from '@ant-design/icons'
 import { Modal, Upload } from 'antd'
 
-// @ts-ignore comment
+// @ts-ignore
 import type { GetProp, UploadFile, UploadProps } from 'antd'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
@@ -65,15 +64,7 @@ const ImageUpload = ({ setFileArray }: { setFileArray: any }) => {
         footer={null}
         onCancel={handleCancel}
       >
-        <div className="relative w-full">
-          <Image
-            alt="example"
-            fill
-            style={{ width: '100%' }}
-            src={previewImage}
-            className="object-contain"
-          />
-        </div>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </>
   )

@@ -8,6 +8,7 @@ import { SubmitHandler } from 'react-hook-form'
 import { useUserLoginMutation } from '@/redux/api/authApi'
 import { useRouter } from 'next/navigation'
 import { isLoggedIn, storeUserInfo } from '../../services/auth.service'
+import Link from 'next/link'
 type FormValues = {
   usernameOrEmail: string
   password: string
@@ -74,6 +75,28 @@ const LoginPage = () => {
               Login
             </Button>
           </Form>
+        </div>
+        <div>
+          <div
+            style={{ textAlign: 'center', marginTop: '5rem', color: '#4B5563' }}
+          >
+            <p style={{ marginBottom: '0.5rem' }}>
+              Don&apos;t have an account?
+            </p>
+            <Link
+              href="/signup"
+              style={{
+                color: '#38A169',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                ':hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Sign up now
+            </Link>
+          </div>
         </div>
       </Col>
     </Row>

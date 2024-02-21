@@ -1,5 +1,7 @@
 'use client'
 
+const SITE_KEY = '6LdWIngpAAAAAKdfKgXdd2GWOlWo6juEOmyMY4OL'
+
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -521,7 +523,7 @@ const SignUp = () => {
         {/* {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} */}
         <div className="mb-4">
           <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || SITE_KEY}
             onChange={setCaptcha}
           />
           {captchaError && (

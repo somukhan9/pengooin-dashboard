@@ -12,7 +12,7 @@ import { ICategory } from '@/types'
 import { Button, Col, Row, UploadFile, message } from 'antd'
 import { useState } from 'react'
 
-const ProductCreatePage = () => {
+const CreateProductPage = () => {
   const [fileArray, setFileArray] = useState([])
   const { data, isLoading } = useCategoriesQuery({ limit: 100, page: 1 })
   //@ts-ignore
@@ -213,4 +213,4 @@ const ProductCreatePage = () => {
   )
 }
 
-export default ProductCreatePage
+export default CreateProductPage
