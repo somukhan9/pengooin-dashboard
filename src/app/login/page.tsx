@@ -1,16 +1,10 @@
-import LoginPage from '@/components/Login/Login'
-import { Metadata } from 'next'
+import Login from '@/components/Login'
 
-export const metadata: Metadata = {
-  title: 'Pengooin Dashboard | Login',
-}
-
-const Login = () => {
+const LoginPage = () => {
   return (
-    <>
-      <LoginPage />
-    </>
+    <div className="md:px-10 px-5">
+      <Login />
+    </div>
   )
 }
-
-export default Login
+export default LoginPage

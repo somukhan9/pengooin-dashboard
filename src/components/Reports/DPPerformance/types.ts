@@ -4,14 +4,16 @@ export type TDeliveryPerson = {
 }
 
 export type TOrder = {
+  key: string
   orderId: string
-  deliveryPerson: TDeliveryPerson
+  deliveryPersonId: string
+  deliveryPersonName: string
   orderTime: Date
   assignmentTime: Date
   inProgressTime: Date
   orderInProgress: number // in minutes
   receivedTime: Date
   deliveryTime: Date
-  deliveryDurationFromReceive: number // in minutes
+  deliveryDurationFromReceived: number // in minutes
   orderExecutionTime: number // in minutes
 }

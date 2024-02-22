@@ -167,10 +167,7 @@ const SignUp = () => {
 
     const response: any = await addShopperWithFormData(formData)
 
-    console.log('From FORM STATE ' + isSubmitSuccessful)
-    console.log(response)
-
-    console.log(formData)
+    // console.log(response)
 
     // If the submission is successful then clear the form and take necessary actions for next step
     if (response?.data?.success) {
@@ -189,7 +186,11 @@ const SignUp = () => {
       return
     }
 
-    if (response?.error?.status === 400 && response?.error?.message) {
+    if (
+      response?.error?.status >= 400 &&
+      response?.error?.status < 500 &&
+      response?.error?.message
+    ) {
       toast.error(response.error.message)
       return
     }

@@ -2,9 +2,13 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy } from 'react'
 
 import classnames from 'classnames'
+
+// const FulFillmentReport = lazy(() => import('./FulFillment'))
+// const MonetaryReport = lazy(() => import('./Monetary'))
+// const DPPerformanceReport = lazy(() => import('./DPPerformance'))
 
 import FulFillmentReport from './FulFillment'
 import MonetaryReport from './Monetary'
@@ -95,12 +99,10 @@ const Report = () => {
       {isClient ? (
         <div className="w-full flex items-center justify-center relative">
           <div
-            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+            className={`w-full transition-all duration-200 ease-in-out ${classnames(
               {
-                'opacity-0 h-0 overflow-hidden': [1, 2, 3].includes(
-                  currentReport
-                ),
-                'opacity-100': ![1, 2, 3].includes(currentReport),
+                hidden: [1, 2, 3].includes(currentReport),
+                // 'opacity-100': ![1, 2, 3].includes(currentReport),
               }
             )}`}
           >
@@ -109,30 +111,30 @@ const Report = () => {
             </h3>
           </div>
           <div
-            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+            className={`w-full transition-all duration-200 ease-in-out ${classnames(
               {
-                'opacity-0 h-0 overflow-hidden': currentReport !== 1,
-                'opacity-100': currentReport === 1,
+                hidden: currentReport !== 1,
+                // 'opacity-100': currentReport === 1,
               }
             )}`}
           >
             <FulFillmentReport />
           </div>
           <div
-            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+            className={`w-full transition-all duration-200 ease-in-out ${classnames(
               {
-                'opacity-0 h-0 overflow-hidden': currentReport !== 2,
-                'opacity-100': currentReport === 2,
+                hidden: currentReport !== 2,
+                // 'opacity-100': currentReport === 2,
               }
             )}`}
           >
             <MonetaryReport />
           </div>
           <div
-            className={`absolute top-0 w-full transition-all duration-200 ease-in-out ${classnames(
+            className={`w-full transition-all duration-200 ease-in-out ${classnames(
               {
-                'opacity-0 h-0 overflow-hidden': currentReport !== 3,
-                'opacity-100': currentReport === 3,
+                hidden: currentReport !== 3,
+                // 'opacity-100': currentReport === 3,
               }
             )}`}
           >

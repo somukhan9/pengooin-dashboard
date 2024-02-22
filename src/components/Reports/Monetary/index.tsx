@@ -4,31 +4,9 @@ import { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
-// Necessary imports for export features
-import { CSVLink } from 'react-csv'
-import * as XLSX from 'xlsx'
-import Papa from 'papaparse'
-
-const columns = [
-  { id: 1, title: 'Order ID' },
-  { id: 2, title: 'Delivery Charge' },
-  { id: 3, title: 'Vat' },
-  { id: 4, title: 'Total Price' },
-]
-
-type TReport = {
-  id: number
-  deliveryCharge: number
-  vat: number
-  totalPrice: number
-}
-
-const reports = [
-  { id: 1, deliveryCharge: 49, vat: 10, totalPrice: 259 },
-  { id: 2, deliveryCharge: 39, vat: 7, totalPrice: 232 },
-  { id: 3, deliveryCharge: 60, vat: 12, totalPrice: 350 },
-  { id: 4, deliveryCharge: 35, vat: 2, totalPrice: 150 },
-]
+import { TReport } from './types'
+import { columns, exportCSV, exportExcel, reports } from './utils'
+import PDTable from '@/components/ui/PDTable'
 
 const MonetaryReport = () => {
   const searchParams = useSearchParams()
@@ -39,7 +17,19 @@ const MonetaryReport = () => {
   // Only for demo purpose
   const [tableData, setTableData] = useState<TReport[]>([...reports])
 
-  const page = searchParams.get('page') || 1
+  const query: Record<string, any> = {}
+
+  const [page, setPage] = useState<number>(1)
+  const [size, setSize] = useState<number>(10)
+
+  const [sortBy, setSortBy] = useState<string>('')
+  const [sortOrder, setSortOrder] = useState<string>('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
+
+  query['limit'] = size
+  query['page'] = page
+  query['sortBy'] = sortBy
+  query['sortOrder'] = sortOrder
 
   const handleStartDateChange = (date: Date | null) => {
     setSelectedStartDate(date)
@@ -49,55 +39,22 @@ const MonetaryReport = () => {
     setSelectedEndDate(date)
   }
 
-  const exportCSV = () => {
-    // Prepare CSV data
-    const csvData = tableData.map((row) => ({
-      'Order ID': row.id,
-      'Delivery Charge': row.deliveryCharge,
-      VAT: row.vat,
-      'Total Price': row.totalPrice,
-    }))
-
-    // Generate CSV file
-    const csvFileName = 'monetary_report.csv'
-    const csvOptions = { headers: true }
-    // const csvBlob = new Blob([Papa.unparse(csvData, csvOptions)], {
-    //   type: 'text/csv;charset=utf-8;',
-    // })
-    const csvBlob = new Blob([Papa.unparse(csvData, { header: true })], {
-      type: 'text/csv;charset=utf-8;',
-    })
-    const csvUrl = URL.createObjectURL(csvBlob)
-
-    // Create a link and click it to trigger the download
-    const link = document.createElement('a')
-    link.href = csvUrl
-    link.setAttribute('download', csvFileName)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const onPaginationChange = (page: number, pageSize: number) => {
+    setPage(page)
+    setSize(pageSize)
   }
 
-  const exportExcel = () => {
-    // Prepare Excel data
-    const excelData = [
-      ['Order ID', 'Delivery Charge', 'VAT', 'Total Price'],
-      ...tableData.map((row) => [
-        row.id,
-        row.deliveryCharge,
-        row.vat,
-        row.totalPrice,
-      ]),
-    ]
+  const onTableChange = (pagination: any, filter: any, sorter: any) => {
+    const { order, field } = sorter
+    // console.log(order, field);
+    setSortBy(field as string)
+    setSortOrder(order === 'ascend' ? 'asc' : 'desc')
+  }
 
-    // Create a workbook
-    const workbook = XLSX.utils.book_new()
-    const worksheet = XLSX.utils.aoa_to_sheet(excelData)
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1')
-
-    // Generate Excel file
-    const excelFileName = 'monetary_report.xlsx'
-    XLSX.writeFile(workbook, excelFileName)
+  const resetFilters = () => {
+    setSortBy('')
+    setSortOrder('')
+    setSearchTerm('')
   }
 
   return (
@@ -144,7 +101,7 @@ const MonetaryReport = () => {
 
       {/* Data in Table format */}
       <div className="relative overflow-x-auto pb-2">
-        <table className="w-full border border-gray-300 divide-y divide-gray-300">
+        {/* <table className="w-full border border-gray-300 divide-y divide-gray-300">
           <thead className="text-left">
             <tr>
               {columns.map((value: { id: number; title: string }, index) => (
@@ -167,18 +124,28 @@ const MonetaryReport = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
+        <PDTable
+          columns={columns}
+          dataSource={reports}
+          pageSize={size}
+          showSizeChanger={true}
+          onPaginationChange={onPaginationChange}
+          onTableChange={onTableChange}
+          showPagination={true}
+          scroll={{ x: true }}
+        />
       </div>
       <div className="mt-4 flex space-x-4">
         <button
-          onClick={exportCSV}
+          onClick={() => exportCSV(tableData)}
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-500"
         >
           Export as CSV
         </button>
 
         <button
-          onClick={exportExcel}
+          onClick={() => exportExcel(tableData)}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-500"
         >
           Export as Excel

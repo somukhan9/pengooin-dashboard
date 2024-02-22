@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Layout, Menu } from "antd";
+import { useState } from 'react'
+import { Layout, Menu } from 'antd'
 
-import { sidebarItems } from "@/constants/sidebarItems";
-import { getUserInfo } from "@/services/auth.service";
+import { sidebarItems } from '@/constants/sidebarItems'
+import { getUserInfo } from '@/services/auth.service'
 
-const { Sider } = Layout;
+const { Sider } = Layout
 
 const SideBar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false)
 
-  const { role } = getUserInfo() as any;
+  const { role } = getUserInfo() as any
 
   return (
     <Sider
@@ -20,43 +20,44 @@ const SideBar = () => {
       onCollapse={(value) => setCollapsed(value)}
       width={280}
       style={{
-        overflow: "auto",
-        height: "100vh",
-        position: "sticky",
+        overflow: 'auto',
+        height: '100vh',
+        position: 'sticky',
         left: 0,
         top: 0,
         bottom: 0,
+        zIndex: 100,
       }}
     >
       <div
         style={{
-          color: "white",
-          fontSize: "1.5rem",
-          textAlign: "center",
-          fontWeight: "bold",
-          marginBottom: ".5rem",
-          marginTop: ".5rem",
-          padding: "10px 0px",
+          color: 'white',
+          fontSize: '1.5rem',
+          textAlign: 'center',
+          fontWeight: 'bold',
+          marginBottom: '.5rem',
+          marginTop: '.5rem',
+          padding: '10px 0px',
         }}
       >
-        {role === "merchant"
-          ? "Merchant Dashboard"
-          : role === "admin"
-          ? "Admin Dashboard"
-          : role === "raider"
-          ? "Raider Dashboard"
-          : role === "super_admin"
-          ? "Super Admin Dashboard"
-          : "Dashboard"}
+        {role === 'merchant'
+          ? 'Merchant Dashboard'
+          : role === 'admin'
+          ? 'Admin Dashboard'
+          : role === 'raider'
+          ? 'Raider Dashboard'
+          : role === 'super_admin'
+          ? 'Super Admin Dashboard'
+          : 'Dashboard'}
       </div>
       <Menu
         theme="dark"
-        defaultSelectedKeys={["1"]}
+        defaultSelectedKeys={['1']}
         mode="inline"
         items={sidebarItems(role)}
       />
     </Sider>
-  );
-};
+  )
+}
 
-export default SideBar;
+export default SideBar

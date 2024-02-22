@@ -1,21 +1,21 @@
-import { useSearchParams } from 'next/navigation'
+// import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
-// Necessary imports for export features
-import { CSVLink } from 'react-csv'
-import * as XLSX from 'xlsx'
-import Papa from 'papaparse'
-
 import { TOrder } from './types'
-import { generateDummyData, columns } from './utils'
+import {
+  generateDummyData,
+  columns,
+  TColumn,
+  exportCSV,
+  exportExcel,
+} from './utils'
+import PDTable from '@/components/ui/PDTable'
 
 const DPPerformanceReport = () => {
   const dpPerformanceData: TOrder[] = generateDummyData()
-
-  const searchParams = useSearchParams()
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null)
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
@@ -23,7 +23,19 @@ const DPPerformanceReport = () => {
   // Only for demo purpose
   const [tableData, setTableData] = useState<TOrder[]>([...dpPerformanceData])
 
-  const page = searchParams.get('page') || 1
+  const query: Record<string, any> = {}
+
+  const [page, setPage] = useState<number>(1)
+  const [size, setSize] = useState<number>(10)
+
+  const [sortBy, setSortBy] = useState<string>('')
+  const [sortOrder, setSortOrder] = useState<string>('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
+
+  query['limit'] = size
+  query['page'] = page
+  query['sortBy'] = sortBy
+  query['sortOrder'] = sortOrder
 
   const handleStartDateChange = (date: Date | null) => {
     setSelectedStartDate(date)
@@ -33,81 +45,22 @@ const DPPerformanceReport = () => {
     setSelectedEndDate(date)
   }
 
-  const exportCSV = () => {
-    // Prepare CSV data
-    const csvData = tableData.map((row) => ({
-      'Order ID': row.orderId,
-      'Delivery Person ID': row.deliveryPerson.id,
-      'Delivery Person Name': row.deliveryPerson.name,
-      'Order Time': row.orderTime,
-      'Assignment Time': row.assignmentTime,
-      'In Progress Time': row.inProgressTime,
-      'Order In Progress (min)': row.orderInProgress,
-      'Received Time': row.receivedTime,
-      'Delivery Time': row.deliveryTime,
-      'Delivery Duration From Receive (min)': row.deliveryDurationFromReceive,
-      'Order Execution Time (min)': row.orderExecutionTime,
-    }))
-
-    // Generate CSV file
-    const csvFileName = 'dp_performance_report.csv'
-    const csvOptions = { headers: true }
-    // const csvBlob = new Blob([Papa.unparse(csvData, csvOptions)], {
-    //   type: 'text/csv;charset=utf-8;',
-    // })
-    const csvBlob = new Blob([Papa.unparse(csvData, { header: true })], {
-      type: 'text/csv;charset=utf-8;',
-    })
-    const csvUrl = URL.createObjectURL(csvBlob)
-
-    // Create a link and click it to trigger the download
-    const link = document.createElement('a')
-    link.href = csvUrl
-    link.setAttribute('download', csvFileName)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const onPaginationChange = (page: number, pageSize: number) => {
+    setPage(page)
+    setSize(pageSize)
   }
 
-  const exportExcel = () => {
-    // Prepare Excel data
-    const excelData = [
-      [
-        'Order ID',
-        'Delivery Person ID',
-        'Delivery Person Name',
-        'Order Time',
-        'Assignment Time',
-        'In Progress Time',
-        'Order In Progress (min)',
-        'Received Time',
-        'Delivery Time',
-        'Delivery Duration From Receive (min)',
-        'Order Execution Time (min)',
-      ],
-      ...tableData.map((row) => [
-        row.orderId,
-        row.deliveryPerson.id,
-        row.deliveryPerson.name,
-        row.orderTime,
-        row.assignmentTime,
-        row.inProgressTime,
-        row.orderInProgress,
-        row.receivedTime,
-        row.deliveryTime,
-        row.deliveryDurationFromReceive,
-        row.orderExecutionTime,
-      ]),
-    ]
+  const onTableChange = (pagination: any, filter: any, sorter: any) => {
+    const { order, field } = sorter
+    // console.log(order, field);
+    setSortBy(field as string)
+    setSortOrder(order === 'ascend' ? 'asc' : 'desc')
+  }
 
-    // Create a workbook
-    const workbook = XLSX.utils.book_new()
-    const worksheet = XLSX.utils.aoa_to_sheet(excelData)
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1')
-
-    // Generate Excel file
-    const excelFileName = 'dp_performance_report.xlsx'
-    XLSX.writeFile(workbook, excelFileName)
+  const resetFilters = () => {
+    setSortBy('')
+    setSortOrder('')
+    setSearchTerm('')
   }
 
   return (
@@ -154,15 +107,15 @@ const DPPerformanceReport = () => {
 
       {/* Data in Table format */}
       <div className="relative overflow-x-auto pb-2">
-        <table className="w-full border border-gray-300 divide-y divide-gray-300">
+        {/* <table className="w-full border border-gray-300 divide-y divide-gray-300">
           <thead className="text-left">
             <tr>
-              {columns.map((value: string, index) => (
+              {columns.map((value: TColumn, index: number) => (
                 <th
-                  key={index}
+                  key={value.id}
                   className="text-left px-6 py-2 whitespace-nowrap"
                 >
-                  {value}
+                  {value.title}
                 </th>
               ))}
             </tr>
@@ -196,18 +149,28 @@ const DPPerformanceReport = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
+        <PDTable
+          columns={columns}
+          dataSource={dpPerformanceData}
+          pageSize={size}
+          showSizeChanger={true}
+          onPaginationChange={onPaginationChange}
+          onTableChange={onTableChange}
+          showPagination={true}
+          scroll={{ x: true }}
+        />
       </div>
       <div className="mt-4 flex space-x-4">
         <button
-          onClick={exportCSV}
+          onClick={() => exportCSV(tableData)}
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-500"
         >
           Export as CSV
         </button>
 
         <button
-          onClick={exportExcel}
+          onClick={() => exportExcel(tableData)}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-500"
         >
           Export as Excel
